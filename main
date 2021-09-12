@@ -19,3 +19,44 @@ def splitWords(text):
     length = len(list(jieba.lcut(f2)))  # length为分词后词的个数
     s = jieba.analyse.extract_tags(f2, topK=length)  # 提取主题词
     return s
+
+
+# simhash
+def getSimh(s):
+    i = 0
+    weight = len(s)
+    fv = [0] * 128
+    for word in s:
+        m = hashlib.md5()
+        m.update(word.encode("utf-8"))
+        hashc = bin(int(m.hexdigest(), 16))[2:]
+        if len(hashc) < 128:
+            dif = 128 - len(hashc)
+            for d in range(dif):
+                hashc += '0'
+        for j in range(len(fv)):
+            if hashc[j] == '1':
+                fv[j] += (10 - (10 * i / weight))
+            else:
+                fv[j] -= (10 - (10 * i / weight))
+        i += 1
+    simh = ''
+    for k in range(len(fv)):
+        if fv[k] >= 0:
+            simh += '1'
+        else:
+            simh += '0'
+    return simh
+
+
+# 计算海明距离得出相似度
+def getSimilarity():
+
+
+
+def test():
+
+
+
+if __name__ == '__main__':
+    test()
