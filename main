@@ -1,1 +1,21 @@
+# -*- codeing = utf-8 -*-
+# @Time : 2021/9/9 16:11
+# @Author : eee-qxxtg
+# @File : main.py
+# @Software : PyCharm
 
+
+import jieba
+import jieba.analyse
+
+
+# 分词
+def splitWords(text):
+    # with open(text, 'r') as f:
+    # seg_text = f.read()
+    f1 = open(text, 'r', encoding='UTF-8')
+    f2 = f1.read()
+    f1.close()
+    length = len(list(jieba.lcut(f2)))  # length为分词后词的个数
+    s = jieba.analyse.extract_tags(f2, topK=length)  # 提取主题词
+    return s
