@@ -7,6 +7,11 @@
 
 import jieba
 import jieba.analyse
+import eventlet
+import hashlib
+import json
+import sys
+import time
 
 
 # 分词
@@ -63,7 +68,31 @@ def getSimilarity():
 
 
 def test():
-
+eventlet.monkey_patch()
+    with eventlet.Timeout(5, False): 
+        time.sleep(10)
+        input()
+    path01 = sys.argv[1:2]  
+    path02 = sys.argv[2:3]
+    path03 = sys.argv[3:]
+    path1 = ','.join(path01)  
+    path2 = ','.join(path02)
+    path3 = ','.join(path03)
+    if not jieba.os.path.exists(path1):
+        print("论文原文不存在！")
+        exit()
+    if not jieba.os.path.exists(path2):
+        print("抄袭版论文不存在！")
+        exit()
+    key1 = splitWords(path1)
+    key2 = splitWords(path2)
+    simhash1 = getSimh(key1)
+    simhash2 = getSimh(key2)
+    s = getSimilarity(simhash1, simhash2)
+    print('文章相似度为:%f' % s)
+    with open(path3, 'a', encoding='utf-8')as f: 
+        f.write('文章的相似度为')
+        f.write(json.dumps(s, ensure_ascii=False) + '\n')
 
 
 if __name__ == '__main__':
