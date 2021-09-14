@@ -51,7 +51,15 @@ def getSimh(s):
 
 # 计算海明距离得出相似度
 def getSimilarity():
-
+    d = 0
+    if len(simh1) != len(simh2):
+        d = -1
+    else:
+        for i in range(len(simh1)):
+            if simh1[i] != simh2[i]:
+                d += 1
+    s = 0.01 * (100 - d * 100 / 128)
+    return s
 
 
 def test():
