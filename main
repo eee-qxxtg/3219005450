@@ -30,24 +30,24 @@ def splitWords(text):
 def getSimh(s):
     i = 0
     weight = len(s)
-    fv = [0] * 128
-    for word in s:
-        m = hashlib.md5()
+    fv = [0] * 128  # feature vector
+    for word in s:  # 计算各个特征向量的hash值
+        m = hashlib.md5()  # 获取一个md5加密算法对象
         m.update(word.encode("utf-8"))
-        hashc = bin(int(m.hexdigest(), 16))[2:]
-        if len(hashc) < 128:
+        hashc = bin(int(m.hexdigest(), 16))[2:]  # 获取加密后的二进制字符串，并去掉开头的'0b'
+        if len(hashc) < 128:  # hash值需在低位以0补齐128位
             dif = 128 - len(hashc)
             for d in range(dif):
                 hashc += '0'
-        for j in range(len(fv)):
-            if hashc[j] == '1':
+        for j in range(len(fv)):  # 给所有特征向量进行加权
+            if hashc[j] == '1':  # 合并特征向量的加权结果
                 fv[j] += (10 - (10 * i / weight))
             else:
                 fv[j] -= (10 - (10 * i / weight))
         i += 1
     simh = ''
-    for k in range(len(fv)):
-        if fv[k] >= 0:
+    for k in range(len(fv)):  # 降维
+        if fv[k] >= 0:  # 对于n-bit签名的累加结果，大于0则置1，否则置0
             simh += '1'
         else:
             simh += '0'
@@ -55,7 +55,7 @@ def getSimh(s):
 
 
 # 计算海明距离得出相似度
-def getSimilarity():
+def getSimilarity(simh1, simh2):
     d = 0
     if len(simh1) != len(simh2):
         d = -1
@@ -68,14 +68,14 @@ def getSimilarity():
 
 
 def test():
-eventlet.monkey_patch()
-    with eventlet.Timeout(5, False): 
+    eventlet.monkey_patch()
+    with eventlet.Timeout(5, False):  # 设置超时时间为5秒
         time.sleep(10)
         input()
-    path01 = sys.argv[1:2]  
+    path01 = sys.argv[1:2]  # 获取命令行参数
     path02 = sys.argv[2:3]
     path03 = sys.argv[3:]
-    path1 = ','.join(path01)  
+    path1 = ','.join(path01)  # 将列表转换为字符串
     path2 = ','.join(path02)
     path3 = ','.join(path03)
     if not jieba.os.path.exists(path1):
@@ -90,7 +90,7 @@ eventlet.monkey_patch()
     simhash2 = getSimh(key2)
     s = getSimilarity(simhash1, simhash2)
     print('文章相似度为:%f' % s)
-    with open(path3, 'a', encoding='utf-8')as f: 
+    with open(path3, 'a', encoding='utf-8')as f:  # 将结果写入指定路径path3
         f.write('文章的相似度为')
         f.write(json.dumps(s, ensure_ascii=False) + '\n')
 
