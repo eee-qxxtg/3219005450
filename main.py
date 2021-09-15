@@ -3,9 +3,10 @@
 # @Author : eee-qxxtg
 # @File : main.py
 # @Software : PyCharm
+
+
 import os
 import re
-
 import jieba
 import jieba.analyse
 import eventlet
@@ -82,10 +83,8 @@ def test():
     if not os.path.exists(path2):
         print("抄袭版论文不存在！")
         exit()
-    key1 = splitWords(path1)
-    key2 = splitWords(path2)
-    simhash1 = getSimh(key1)
-    simhash2 = getSimh(key2)
+    simhash1 = getSimh(splitWords(path1))
+    simhash2 = getSimh(splitWords(path2))
     s = getSimilarity(simhash1, simhash2)
     print('文章相似度为:%f' % s)
     with open(path3, 'a', encoding='utf-8')as f:  # 将结果写入指定路径path3
