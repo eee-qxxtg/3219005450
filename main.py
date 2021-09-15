@@ -5,7 +5,6 @@
 # @Software : PyCharm
 
 
-import os
 import re
 import jieba
 import jieba.analyse
@@ -77,19 +76,15 @@ def test():
     path1 = ','.join(sys.argv[1:2])  # 获取命令行参数 将列表转换为字符串
     path2 = ','.join(sys.argv[2:3])
     path3 = ','.join(sys.argv[3:])
-    if not os.path.exists(path1):
-        print("论文原文不存在！")
-        exit()
-    if not os.path.exists(path2):
-        print("抄袭版论文不存在！")
-        exit()
     simhash1 = getSimh(splitWords(path1))
     simhash2 = getSimh(splitWords(path2))
-    s = getSimilarity(simhash1, simhash2)
-    print('文章相似度为:%f' % s)
+    s1 = getSimilarity(simhash1, simhash2)
+    s2 = round(s1, 2)  # 精确到小数点后两位
+    print('文章相似度为:%f' % s2)
     with open(path3, 'a', encoding='utf-8')as f:  # 将结果写入指定路径path3
-        f.write(path3 + '与原文的相似度为：')
-        f.write(json.dumps(s, ensure_ascii=False) + '\n')
+        f.write(path2 + '与原文的相似度为：')
+        f.write(json.dumps(s2, ensure_ascii=False) + '\n')
+    return s2
 
 
 if __name__ == '__main__':
