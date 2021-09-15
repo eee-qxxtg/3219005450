@@ -3,7 +3,8 @@
 # @Author : eee-qxxtg
 # @File : main.py
 # @Software : PyCharm
-
+import os
+import re
 
 import jieba
 import jieba.analyse
@@ -16,14 +17,14 @@ import time
 
 # 分词
 def splitWords(text):
-    # with open(text, 'r') as f:
-    # seg_text = f.read()
-    f1 = open(text, 'r', encoding='UTF-8')
-    f2 = f1.read()
+    with open(text, 'r', encoding='UTF-8') as f1:
+        f2 = f1.read()
+    pattern = re.compile(u"[^a-zA-Z0-9\u4e00-\u9fa5]")  # 匹配过滤
+    s = pattern.sub("", f2)
     f1.close()
-    length = len(list(jieba.lcut(f2)))  # length为分词后词的个数
-    s = jieba.analyse.extract_tags(f2, topK=length)  # 提取主题词
-    return s
+    length = len(list(jieba.lcut(s)))  # length为分词后词的个数
+    string = jieba.analyse.extract_tags(s, topK=length)  # 提取主题词
+    return string
 
 
 # simhash
@@ -72,16 +73,13 @@ def test():
     with eventlet.Timeout(5, False):  # 设置超时时间为5秒
         time.sleep(10)
         input()
-    path01 = sys.argv[1:2]  # 获取命令行参数
-    path02 = sys.argv[2:3]
-    path03 = sys.argv[3:]
-    path1 = ','.join(path01)  # 将列表转换为字符串
-    path2 = ','.join(path02)
-    path3 = ','.join(path03)
-    if not jieba.os.path.exists(path1):
+    path1 = ','.join(sys.argv[1:2])  # 获取命令行参数 将列表转换为字符串
+    path2 = ','.join(sys.argv[2:3])
+    path3 = ','.join(sys.argv[3:])
+    if not os.path.exists(path1):
         print("论文原文不存在！")
         exit()
-    if not jieba.os.path.exists(path2):
+    if not os.path.exists(path2):
         print("抄袭版论文不存在！")
         exit()
     key1 = splitWords(path1)
@@ -91,7 +89,7 @@ def test():
     s = getSimilarity(simhash1, simhash2)
     print('文章相似度为:%f' % s)
     with open(path3, 'a', encoding='utf-8')as f:  # 将结果写入指定路径path3
-        f.write('文章的相似度为')
+        f.write(path3 + '与原文的相似度为：')
         f.write(json.dumps(s, ensure_ascii=False) + '\n')
 
 
