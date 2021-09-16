@@ -5,6 +5,7 @@
 # @Software : PyCharm
 
 
+import os
 import re
 import jieba
 import jieba.analyse
@@ -76,6 +77,12 @@ def test():
     path1 = ','.join(sys.argv[1:2])  # 获取命令行参数 将列表转换为字符串
     path2 = ','.join(sys.argv[2:3])
     path3 = ','.join(sys.argv[3:])
+    if not os.path.exists(path1):
+        print("论文原文不存在！")
+        exit()
+    if not os.path.exists(path2):
+        print("抄袭论文不存在！")
+        exit()
     simhash1 = getSimh(splitWords(path1))
     simhash2 = getSimh(splitWords(path2))
     s1 = getSimilarity(simhash1, simhash2)
